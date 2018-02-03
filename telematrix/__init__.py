@@ -290,28 +290,6 @@ async def matrix_transaction(request):
                     else:
                         sender.name = displayname
                     db.session.add(sender)
-
-                    msg = None
-                    if 'unsigned' in event and 'prev_content' in event['unsigned']:
-                        prev = event['unsigned']['prev_content']
-                        if prev['membership'] == 'join':
-                            if 'displayname' in prev and prev['displayname']:
-                                oldname = prev['displayname']
-
-                            msg = '> {} changed their display name to {}'\
-                                  .format(oldname, displayname)
-                    else:
-                        msg = '> {} has joined the room'.format(displayname)
-
-                    if msg:
-                        response = await group.send_text(msg)
-                elif content['membership'] == 'leave':
-                    msg = '< {} has left the room'.format(displayname)
-                    response = await group.send_text(msg)
-                elif content['membership'] == 'ban':
-                    msg = '<! {} was banned from the room'.format(displayname)
-                    response = await group.send_text(msg)
-
             if response:
                 message = db.Message(
                     response['result']['chat']['id'],
@@ -457,7 +435,7 @@ async def update_matrix_displayname_avatar(tg_user):
         name += ' ' + tg_user['last_name']
     name += ' (Telegram)'
     user_id = USER_ID_FORMAT.format(tg_user['id'])
-    
+
     db_user = db.session.query(db.TgUser).filter_by(tg_id=tg_user['id']).first()
 
     profile_photos = await TG_BOT.get_user_profile_photos(tg_user['id'])
@@ -488,7 +466,7 @@ async def update_matrix_displayname_avatar(tg_user):
             await matrix_put('client', 'profile/{}/avatar_url'.format(user_id), user_id, {'avatar_url':None})
         db.session.add(db_user)
     db.session.commit()
-        
+
 
 @TG_BOT.handle('sticker')
 async def aiotg_sticker(chat, sticker):
