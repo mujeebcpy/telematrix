@@ -565,7 +565,7 @@ async def aiotg_photo(chat, photo):
 
 @TG_BOT.command(r'/alias')
 async def aiotg_alias(chat, match):
-    await chat.reply('The Matrix alias for this chat is #telegram_{}:{}'
+    await chat.reply('invite @alias:synapse.fsci.org.in into matrix group, send !alias #telegram_{}:{} in matrix group. yes now the groups are connected. Thank you'
                      .format(chat.id, MATRIX_HOST_BARE))
 
 
